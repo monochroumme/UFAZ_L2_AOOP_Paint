@@ -12,7 +12,7 @@ public class Line extends Shape{
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(3));
-        g.setColor(col);
+        g.setColor(color);
         g.drawLine(x, y, x+width, y+height);
         g2.setStroke(new BasicStroke(1));
         g.setColor(Color.GRAY);

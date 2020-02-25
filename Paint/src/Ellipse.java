@@ -7,7 +7,7 @@ public class Ellipse extends Shape{
     }
 
     public void draw(Graphics g){
-        g.setColor(col);
+        g.setColor(color);
         g.fillOval(x, y, width, height);
         g.setColor(Color.GRAY);
         if(isMoving) g.drawRect(x, y, width, height);
