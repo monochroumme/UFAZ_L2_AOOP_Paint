@@ -1,12 +1,14 @@
+package shapes;
+
 import java.awt.*;
 import java.io.Serializable;
 
 public abstract class Shape implements Serializable{
-    protected int x, y, dx, dy, width, height, id;
+    public int x, y, dx, dy, width, height, id;
     protected Color color;
-    protected boolean isMoving, isFill;
+    public boolean isMoving, isFill;
 
-    public Shape(int x, int y, int width, int height, Color c, int id, boolean isFill) {
+    public Shape(int x, int y, int width, int height, Color c, int id) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -15,7 +17,6 @@ public abstract class Shape implements Serializable{
         this.dy = 0;
         this.color = c;
         this.id = id;
-        this.isFill = isFill;
     }
 
     public abstract void draw(Graphics g);

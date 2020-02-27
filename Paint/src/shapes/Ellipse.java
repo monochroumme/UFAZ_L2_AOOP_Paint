@@ -1,15 +1,17 @@
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
+package shapes;
 
-public class Ellipse extends Shape{
+import java.awt.*;
+
+public class Ellipse extends Shape {
 
     public Ellipse(int x, int y, int width, int height, Color c, int id,boolean isFill) {
-        super(x, y, width, height, c, id,  isFill);
+        super(x, y, width, height, c, id);
+        this.isFill = isFill;
     }
 
     public void draw(Graphics g){
         g.setColor(color);
-        if(isFill)  g.fillOval(x, y, width, height);
+        if(isFill) g.fillOval(x,y,width,height);
         else g.drawOval(x,y,width,height);
         g.setColor(Color.GRAY);
         if(isMoving) g.drawRect(x, y, width, height);

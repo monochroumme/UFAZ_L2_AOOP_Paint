@@ -1,3 +1,5 @@
+import shapes.Shape;
+
 import java.io.*;
 import java.util.ArrayList;
 

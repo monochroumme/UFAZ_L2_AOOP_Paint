@@ -1,11 +1,13 @@
+package shapes;
+
 import java.awt.*;
 
-public class Line extends Shape{
+public class Line extends Shape {
 
     private int dash_interval; //this is used for the case of drawing dashed line, if it's 0 then we draw a simple line
 
-    public Line(int x, int y, int width, int height, Color c, int id, int dash_interval, boolean isFill){
-        super(x, y, width, height, c, id, isFill);
+    public Line(int x, int y, int width, int height, Color c, int id, int dash_interval){
+        super(x, y, width, height, c, id);
         this.dash_interval=dash_interval;
     }
 
@@ -19,9 +21,7 @@ public class Line extends Shape{
         if(isMoving) g.drawRect(x, y, width, height);
     }
 
-    @Override
-    public boolean containsPoint(int x, int y){
-
+    public boolean containsPointRect(int x, int y){
         float k, b; // parameters of the line
         if(width == 0) k = (float)this.height/(this.width+0.01f);
         else {
@@ -36,4 +36,8 @@ public class Line extends Shape{
         return isInside;
     }
 
+    @Override
+    public boolean containsPoint(int x, int y) {
+        return (this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height);
+    }
 }
