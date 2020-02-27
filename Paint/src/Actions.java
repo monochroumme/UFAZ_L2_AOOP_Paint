@@ -1,3 +1,3 @@
 public enum Actions {
-    MOVE, DELETE, FILL, RECT, ELLIPSE, LINE
+    MOVE, ERASE, FILL, RECT, ELLIPSE, LINE, DRAW
 }

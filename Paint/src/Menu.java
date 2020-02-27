@@ -1,9 +1,10 @@
+import shapes.Shape;
+
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 
-public class Menu extends JMenuBar{
-
+public class Menu extends JMenuBar {
     public Menu() {
         JMenu file_menu = new JMenu("File");
 
@@ -52,17 +53,16 @@ public class Menu extends JMenuBar{
             }
         });
 
-        JMenuItem quit = new JMenuItem("Quit", 'q');
-        quit.addActionListener(e -> {
+        JMenuItem exit = new JMenuItem("Exit", 'e');
+        exit.addActionListener(e -> {
             System.exit(0);
         });
 
         file_menu.add(newFile);
         file_menu.add(fileToOpen);
         file_menu.add(fileToSave);
-        file_menu.add(quit);
+        file_menu.add(exit);
 
         this.add(file_menu);
     }
-
 }

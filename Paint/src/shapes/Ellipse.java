@@ -1,6 +1,8 @@
+package shapes;
+
 import java.awt.*;
 
-public class Ellipse extends Shape{
+public class Ellipse extends Shape {
 
     public Ellipse(int x, int y, int width, int height, Color c, int id) {
         super(x, y, width, height, c, id);
@@ -8,7 +10,7 @@ public class Ellipse extends Shape{
 
     public void draw(Graphics g){
         g.setColor(color);
-        g.fillOval(x, y, width, height);
+        g.fillOval(x,y,width,height);
         g.setColor(Color.GRAY);
         if(isMoving) g.drawRect(x, y, width, height);
     }

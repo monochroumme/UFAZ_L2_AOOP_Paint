@@ -1,3 +1,7 @@
+import shapes.Ellipse;
+import shapes.Line;
+import shapes.Shape;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -6,16 +10,20 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 public class DrawingBoard extends JPanel implements MouseListener, MouseMotionListener {
-    private Color currentColor;
+    public Color curColor;
+    public Color altColor;
     private Actions currentAction;
-    private Shape currentShape;
+    private shapes.Shape currentShape;
+    int curX, curY, oldX, oldY;
+    boolean isFill;
 
-    public ArrayList<Shape> shapesOnBoard;
-    private boolean isDrawing;
+    public ArrayList<shapes.Shape> shapesOnBoard;
+    private boolean isDrawing, isResizing;
 
     public DrawingBoard() {
         setBackground(Color.WHITE);
-        currentColor = Color.BLACK;
+        curColor = Color.BLACK;
+        altColor = Color.WHITE;
         currentAction = Actions.MOVE;
         shapesOnBoard = new ArrayList<>();
         isDrawing = false;
@@ -24,16 +32,16 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         setFocusable(true);
         addMouseListener(this);
         addMouseMotionListener(this);
-        this.requestFocus();
+        requestFocus();
     }
 
-    @Override
     public void paintComponent(Graphics g) {
-        // anti-aliasing
+        // add anti-aliasing to make the edges smooth
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         super.paintComponent(g);
 
+        // draw all shapesOnBoard
         for(Shape s : shapesOnBoard) s.draw(g);
 
         if(isDrawing) currentShape.draw(g);
@@ -43,7 +51,7 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
             case MOVE:
                 actionName = "move";
                 break;
-            case DELETE:
+            case ERASE:
                 actionName = "delete";
                 break;
             case FILL:
@@ -63,8 +71,12 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         }
     }
 
-    public void setColor(Color c) {
-        this.currentColor = c;
+    public void setCurColor(Color c) {
+        this.curColor = c;
+    }
+
+    public void setAltColor(Color c) {
+        this.altColor = c;
     }
 
     public void setAction(Actions a) {
@@ -73,35 +85,39 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int target_id = -1;
+        int id = -1;
 
         for (int i = shapesOnBoard.size()-1; i >= 0; i--) {
             if (shapesOnBoard.get(i).containsPoint(e.getX(), e.getY())) {
-                target_id = i;
+                id = i;
                 shapesOnBoard.get(i).dx = shapesOnBoard.get(i).x - e.getX();
                 shapesOnBoard.get(i).dy = shapesOnBoard.get(i).y - e.getY();
                 break;
             }
         }
 
+        oldX = e.getX();
+        oldY = e.getY();
+
         switch (currentAction) {
             case MOVE:
-                if (target_id != -1) shapesOnBoard.get(target_id).isMoving = true;
+                if (id != -1) shapesOnBoard.get(id).isMoving = true;
                 break;
-            case FILL: break;
-            case DELETE: break;
             case RECT:
-                currentShape = new Rectangle(e.getX(), e.getY(), 1, 1, currentColor, shapesOnBoard.size());
+                currentShape = new shapes.Rectangle(e.getX(), e.getY(), 1, 1, curColor, shapesOnBoard.size());
+                isResizing = true;
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
                 break;
             case ELLIPSE:
-                currentShape = new Ellipse(e.getX(), e.getY(), 1, 1, currentColor, shapesOnBoard.size());
+                currentShape = new Ellipse(e.getX(), e.getY(), 1, 1, curColor, shapesOnBoard.size());
+                isResizing = true;
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
                 break;
             case LINE:
-                currentShape = new Line(e.getX(), e.getY(), 1, 1, currentColor, shapesOnBoard.size(), 10);
+                currentShape = new Line(e.getX(), e.getY(), 1, 1, curColor, shapesOnBoard.size(),5);
+                isResizing = true;
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
                 break;
@@ -111,6 +127,9 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        curX = e.getX();
+        curY = e.getY();
+
         switch (currentAction) {
             case MOVE:
                 for (int i = shapesOnBoard.size()-1; i >= 0; i--) {
@@ -120,70 +139,83 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
                     }
                 }
                 break;
-            case FILL: break;
-            case DELETE: break;
-            default:
-                if(isDrawing) {
-                    // we don't need (non-line) shapesOnBoard with negative width or height, dealing with this  is
-                    // more difficult, so we just remove the shape from the array, effectively ignoring it
-                    if(currentShape.width < 0 || currentShape.height < 0) {
-                        if(currentAction != Actions.LINE)
-                            shapesOnBoard.remove(shapesOnBoard.size()-1);
-                    }
+            case ELLIPSE:
+            case LINE:
+            case RECT:
+                if (isDrawing) {
                     isDrawing = false;
                     currentShape = null;
-                    repaint();
                 }
-            break;
-        }
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        int target_id = -1;
-        for (int i = shapesOnBoard.size()-1; i >= 0; i--) {
-            if(shapesOnBoard.get(i).isMoving) {
-                target_id = i;
-                break;
-            }
-        }
-
-        switch (currentAction) {
-            case MOVE:
-                if (target_id > 0) shapesOnBoard.get(target_id).translateTo(e.getX()+shapesOnBoard.get(target_id).dx, e.getY()+shapesOnBoard.get(target_id).dy);
-                break;
-            case FILL: break;
-            case DELETE: break;
-            default:
-                currentShape.width = e.getX()-currentShape.x;
-                currentShape.height = e.getY()-currentShape.y;
                 break;
         }
         repaint();
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        int target_id = -1;
-        for (int i = shapesOnBoard.size()-1; i >= 0; i--) {
-            if (shapesOnBoard.get(i).containsPoint(e.getX(), e.getY())) {
-                target_id = i;
+    public void mouseDragged(MouseEvent e) {
+        int id = -1;
+        for (int i = shapesOnBoard.size() - 1; i >= 0; i--) {
+            if (shapesOnBoard.get(i) instanceof Line) {
+                if (currentAction == Actions.MOVE && shapesOnBoard.get(i).containsPoint(e.getX(), e.getY()) || currentAction == Actions.ERASE && ((Line) shapesOnBoard.get(i)).containsPointRect(e.getX(), e.getY())) {
+                    id = i;
+                    break;
+                }
+            } else if (shapesOnBoard.get(i).containsPoint(e.getX(), e.getY())) {
+                id = i;
                 break;
             }
         }
-        if (target_id == -1) return;
 
         switch (currentAction) {
-            case DELETE:
-                shapesOnBoard.remove(target_id);
+            case MOVE:
+                if (id >= 0 && shapesOnBoard.get(id).isMoving) shapesOnBoard.get(id).translateTo(e.getX() + shapesOnBoard.get(id).dx, e.getY() + shapesOnBoard.get(id).dy);
                 break;
-            case FILL:
-                shapesOnBoard.get(target_id).setColor(currentColor);
+            case ERASE:
+                if (id >= 0)
+                    shapesOnBoard.remove(id);
+                    repaint();
                 break;
+            case FILL: break;
             default:
+                if (isResizing) {
+                    if (e.getX() - oldX < 0) { // x < 0
+                        if (currentAction != Actions.LINE)
+                            currentShape.x = e.getX();
+                    }
+
+                    if (e.getY() - oldY < 0) { // y < 0
+                        if (currentAction != Actions.LINE)
+                            currentShape.y = e.getY();
+                    }
+
+                    if (currentAction != Actions.LINE) {
+                        currentShape.width = Math.abs(e.getX() - oldX);
+                        currentShape.height = Math.abs(e.getY() - oldY);
+                    } else {
+                        currentShape.width = e.getX() - oldX;
+                        currentShape.height = e.getY() - oldY;
+                    }
+                }
+        }
+        repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int id = -1;
+        for (int i = shapesOnBoard.size() - 1; i >= 0; i--) {
+            if (shapesOnBoard.get(i).containsPoint(e.getX(), e.getY())) {
+                id = i;
+                break;
+            }
+        }
+        if (id == -1) return;
+
+        switch (currentAction) {
+            case FILL:
+                shapesOnBoard.get(id).setColor(curColor);
                 break;
         }
-
         repaint();
     }
 
