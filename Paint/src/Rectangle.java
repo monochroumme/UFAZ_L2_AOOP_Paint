@@ -1,4 +1,3 @@
-
 import java.awt.*;
 
 public class Rectangle extends Shape{
@@ -9,7 +8,7 @@ public class Rectangle extends Shape{
     public void draw(Graphics g){
         g.setColor(color);
         g.fillRect(x, y, width, height);
-        g.setColor(color);
+        g.setColor(Color.GRAY);
         if (isMoving) g.drawRect(x, y, width, height);
     }
 

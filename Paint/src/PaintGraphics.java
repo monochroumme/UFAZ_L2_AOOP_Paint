@@ -44,19 +44,19 @@ public class PaintGraphics {
         tools.add(lineTool);
 
         JColorChooser cc = new JColorChooser();
-        cc.getSelectionModel().addChangeListener( (ChangeEvent e) -> {
+        cc.getSelectionModel().addChangeListener((ChangeEvent e) -> {
             board.setColor(cc.getColor());
         });
         cc.setPreviewPanel(new JPanel());
 
-        JPanel side = new JPanel();
+        JPanel left = new JPanel();
         JPanel bottom = new JPanel();
 
-        side.add(tools);
+        left.add(tools);
         bottom.add(cc);
 
         frame.setJMenuBar(menu);
-        frame.getContentPane().add(side, BorderLayout.LINE_START);
+        frame.getContentPane().add(left, BorderLayout.LINE_START);
         frame.getContentPane().add(board, BorderLayout.CENTER);
         frame.getContentPane().add(bottom, BorderLayout.PAGE_END);
 

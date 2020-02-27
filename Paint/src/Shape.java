@@ -1,13 +1,13 @@
 import java.awt.*;
 import java.io.Serializable;
 
-public abstract class Shape implements Serializable{
+public abstract class Shape implements Serializable {
     protected int x, y, dx, dy, width, height, id;
     protected Color color;
     protected boolean isMoving;
 
     public Shape(int x, int y, int width, int height, Color c, int id) {
-        this.x = y;
+        this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;

@@ -24,16 +24,16 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         setFocusable(true);
         addMouseListener(this);
         addMouseMotionListener(this);
-        requestFocus();
+        this.requestFocus();
     }
 
-    public void draw(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
         // anti-aliasing
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         super.paintComponent(g);
 
-        // draw all shapesOnBoard
         for(Shape s : shapesOnBoard) s.draw(g);
 
         if(isDrawing) currentShape.draw(g);
@@ -94,7 +94,6 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
                 currentShape = new Rectangle(e.getX(), e.getY(), 1, 1, currentColor, shapesOnBoard.size());
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
-                System.out.println(currentShape.x + " " + currentShape.y + " | " + currentShape.dx + " " + currentShape.dy + " " + currentShape.color);
                 break;
             case ELLIPSE:
                 currentShape = new Ellipse(e.getX(), e.getY(), 1, 1, currentColor, shapesOnBoard.size());
@@ -151,7 +150,7 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
 
         switch (currentAction) {
             case MOVE:
-                if (target_id > 0) shapesOnBoard.get(target_id).translateTo(e.getX()+shapesOnBoard.get(target_id).x, e.getY()+shapesOnBoard.get(target_id).y);
+                if (target_id > 0) shapesOnBoard.get(target_id).translateTo(e.getX()+shapesOnBoard.get(target_id).dx, e.getY()+shapesOnBoard.get(target_id).dy);
                 break;
             case FILL: break;
             case DELETE: break;
@@ -175,14 +174,14 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         if (target_id == -1) return;
 
         switch (currentAction) {
-        case DELETE:
-            shapesOnBoard.remove(target_id);
-            break;
-        case FILL:
-            shapesOnBoard.get(target_id).setColor(currentColor);
-            break;
-        default:
-            break;
+            case DELETE:
+                shapesOnBoard.remove(target_id);
+                break;
+            case FILL:
+                shapesOnBoard.get(target_id).setColor(currentColor);
+                break;
+            default:
+                break;
         }
 
         repaint();
