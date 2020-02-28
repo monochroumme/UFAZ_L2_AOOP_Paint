@@ -72,7 +72,13 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         }
     }
 
-    public void setCurColor(Color c) { this.curColor = c; }
+    public void setCurColor(Color c) {
+        this.curColor = c;
+    }
+
+    public void setAltColor(Color c) {
+        this.altColor = c;
+    }
 
     public void setAction(Actions a) {
         this.currentAction = a;
@@ -99,14 +105,12 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
                 if (id != -1) shapesOnBoard.get(id).isMoving = true;
                 break;
             case RECT:
-                currentShape = new shapes.Rectangle(e.getX(), e.getY(), 1, 1, curColor, shapesOnBoard.size(),isFill);
-                isResizing = true;
+
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
                 break;
             case ELLIPSE:
-                currentShape = new Ellipse(e.getX(), e.getY(), 1, 1, curColor, shapesOnBoard.size(),isFill);
-                isResizing = true;
+
                 isDrawing = true;
                 shapesOnBoard.add(currentShape);
                 break;

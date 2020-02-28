@@ -59,8 +59,6 @@ public class Menu extends JMenuBar {
         file_menu.add(fileToSave);
         file_menu.add(exit);
 
-        about.add(help);
-
         this.add(file_menu);
         this.add(about);
     }
