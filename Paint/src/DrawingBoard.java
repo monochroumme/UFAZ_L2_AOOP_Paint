@@ -155,7 +155,8 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
         int id = -1;
         for (int i = shapesOnBoard.size() - 1; i >= 0; i--) {
             if (shapesOnBoard.get(i) instanceof Line) {
-                if (currentAction == Actions.MOVE && shapesOnBoard.get(i).containsPoint(e.getX(), e.getY()) || currentAction == Actions.ERASE && ((Line) shapesOnBoard.get(i)).containsPointRect(e.getX(), e.getY())) {
+                if (currentAction == Actions.MOVE && shapesOnBoard.get(i).containsPoint(e.getX(), e.getY())
+                        || currentAction == Actions.ERASE && ((Line) shapesOnBoard.get(i)).containsPointRect(e.getX(), e.getY())) {
                     id = i;
                     break;
                 }
@@ -164,10 +165,10 @@ public class DrawingBoard extends JPanel implements MouseListener, MouseMotionLi
                 break;
             }
         }
-
         switch (currentAction) {
             case MOVE:
-                if (id >= 0 && shapesOnBoard.get(id).isMoving) shapesOnBoard.get(id).translateTo(e.getX() + shapesOnBoard.get(id).dx, e.getY() + shapesOnBoard.get(id).dy);
+                if (id >= 0 && shapesOnBoard.get(id).isMoving) shapesOnBoard.get(id)
+                        .translateTo(e.getX() + shapesOnBoard.get(id).dx, e.getY() + shapesOnBoard.get(id).dy);
                 break;
             case ERASE:
                 if (id >= 0)
